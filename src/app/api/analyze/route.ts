@@ -47,11 +47,17 @@ Variante 3:
 Título: [Tu título]
 Descripción: [Tu descripción]
 
+LÍMITES DE CARACTERES — REGLA ABSOLUTA E INNEGOCIABLE:
+- Cada TÍTULO debe tener como MÁXIMO 60 caracteres. NUNCA superar los 65 caracteres bajo ninguna circunstancia. Si un título supera los 60 caracteres, reescríbelo más corto.
+- Cada DESCRIPCIÓN debe tener como MÁXIMO 150 caracteres. NUNCA superar los 155 caracteres bajo ninguna circunstancia. Si una descripción supera los 150 caracteres, reescríbela más corta.
+- Cuenta cada letra, cada espacio, cada signo de puntuación. Verifica el conteo ANTES de incluir cada línea.
+- Es PREFERIBLE un título de 55 caracteres excelente que uno de 66 caracteres que se corte en Google.
+- Es PREFERIBLE una descripción de 140 caracteres clara que una de 160 que se trunque.
+
 REGLAS CRÍTICAS DE FORMATO:
-- Sigue TODAS las reglas del documento anterior sin excepción.
-- Verifica internamente que cada título y descripción cumpla los límites de caracteres, pero NUNCA incluyas el conteo de caracteres en el texto de salida.
-- NO añadas "(X caracteres)", "[X caracteres]" ni ninguna indicación de longitud en los títulos ni en las descripciones.
-- Devuelve SOLO el texto limpio de cada título y descripción, sin anotaciones, sin paréntesis con conteos, sin explicaciones.
+- Sigue TODAS las reglas del documento de reglas SEO sin excepción.
+- NUNCA incluyas el conteo de caracteres en el texto de salida. No añadas "(X caracteres)" ni indicaciones de longitud.
+- Devuelve SOLO el texto limpio de cada título y descripción.
 - No incluyas nada más que las 3 variantes en el formato exacto indicado arriba.`;
 }
 
@@ -163,6 +169,26 @@ function cleanCharCount(text: string): string {
         .trim();
 }
 
+// Truncate text to maxLen at the last word boundary (never cuts mid-word)
+function truncateToLimit(text: string, maxLen: number): string {
+    if (text.length <= maxLen) return text;
+
+    // Cut at maxLen, then go back to last space
+    let truncated = text.substring(0, maxLen);
+    const lastSpace = truncated.lastIndexOf(' ');
+    if (lastSpace > maxLen * 0.6) {
+        truncated = truncated.substring(0, lastSpace);
+    }
+
+    // Remove trailing punctuation that looks incomplete
+    truncated = truncated.replace(/[,;:\-—]+\s*$/, '').trim();
+
+    return truncated;
+}
+
+const TITLE_MAX_CHARS = 65;
+const DESC_MAX_CHARS = 155;
+
 // Helper function to parse the strictly formatted text from OpenAI into a structured JSON
 function parseVariants(text: string) {
     const variants: { title: string, description: string }[] = [];
@@ -173,9 +199,12 @@ function parseVariants(text: string) {
         const descMatch = block.match(/Descripción:\s*([\s\S]+?)(?=\n\n|$)/i);
 
         if (titleMatch && descMatch) {
+            const rawTitle = cleanCharCount(titleMatch[1].trim());
+            const rawDesc = cleanCharCount(descMatch[1].trim().replace(/\n/g, ' '));
+
             variants.push({
-                title: cleanCharCount(titleMatch[1].trim()),
-                description: cleanCharCount(descMatch[1].trim().replace(/\n/g, ' '))
+                title: truncateToLimit(rawTitle, TITLE_MAX_CHARS),
+                description: truncateToLimit(rawDesc, DESC_MAX_CHARS)
             });
         }
     });
