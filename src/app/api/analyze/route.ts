@@ -47,7 +47,12 @@ Variante 3:
 Título: [Tu título]
 Descripción: [Tu descripción]
 
-RECUERDA: Sigue TODAS las reglas del documento anterior sin excepción. Cuenta los caracteres antes de devolver cada título y descripción. No incluyas nada más que las 3 variantes.`;
+REGLAS CRÍTICAS DE FORMATO:
+- Sigue TODAS las reglas del documento anterior sin excepción.
+- Verifica internamente que cada título y descripción cumpla los límites de caracteres, pero NUNCA incluyas el conteo de caracteres en el texto de salida.
+- NO añadas "(X caracteres)", "[X caracteres]" ni ninguna indicación de longitud en los títulos ni en las descripciones.
+- Devuelve SOLO el texto limpio de cada título y descripción, sin anotaciones, sin paréntesis con conteos, sin explicaciones.
+- No incluyas nada más que las 3 variantes en el formato exacto indicado arriba.`;
 }
 
 export async function POST(request: Request) {
@@ -148,6 +153,16 @@ Contenido principal extraído: ${paragraphs.substring(0, 1500)}
   }
 }
 
+// Strip any "(XX caracteres)" or similar annotations the model might add
+function cleanCharCount(text: string): string {
+    return text
+        .replace(/\s*\(\d+\s*caracteres\)/gi, '')
+        .replace(/\s*\[\d+\s*caracteres\]/gi, '')
+        .replace(/\s*—\s*\d+\s*caracteres$/gi, '')
+        .replace(/\s*-\s*\d+\s*caracteres$/gi, '')
+        .trim();
+}
+
 // Helper function to parse the strictly formatted text from OpenAI into a structured JSON
 function parseVariants(text: string) {
     const variants: { title: string, description: string }[] = [];
@@ -159,8 +174,8 @@ function parseVariants(text: string) {
 
         if (titleMatch && descMatch) {
             variants.push({
-                title: titleMatch[1].trim(),
-                description: descMatch[1].trim().replace(/\n/g, ' ') // remove potential inner newlines
+                title: cleanCharCount(titleMatch[1].trim()),
+                description: cleanCharCount(descMatch[1].trim().replace(/\n/g, ' '))
             });
         }
     });

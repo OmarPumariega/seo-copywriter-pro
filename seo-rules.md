@@ -44,7 +44,6 @@ El usuario busca una marca, empresa o sitio concreto.
 ### Límites técnicos
 - Máximo **65 caracteres** / **568 píxeles**
 - Ser conservador: apuntar a ~60 caracteres para evitar que Google corte el título
-- Contar siempre los caracteres antes de devolver el resultado
 
 ### Formato
 - **Capitalizado:** Cada Palabra Empieza Con Mayúscula (excepto preposiciones cortas: de, en, a, y, o, con, por, para)
@@ -99,7 +98,6 @@ Claro, conciso, invita a la acción. Usa un verbo de acción o una pregunta.
 ### Límites técnicos
 - Entre **70 y 155 caracteres**
 - Ni demasiado corta (menos de 70) ni demasiado larga (más de 155)
-- Contar siempre los caracteres antes de devolver el resultado
 
 ### Formato
 - Siempre en **español**
