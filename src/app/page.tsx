@@ -186,7 +186,7 @@ export default function Home() {
           {/* Header Section */}
           <div className="text-center mb-12 space-y-4">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
-              SEO Copywriter <span className="text-indigo-600">Pro</span>
+              Titulos y Descripciones <span className="text-indigo-600">SEO</span>
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Genera títulos y descripciones magnéticas, diseñadas para captar el clic y dominar las SERPs.
